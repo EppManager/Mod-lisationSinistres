@@ -1,0 +1,273 @@
+---
+title: ModÃfÂ©lisation des montants des sinistres et des frÃfÂ©quences des sinistres--
+  Notebook
+output:
+  html_notebook: default
+  html_document: default
+---
+
+
+#Read and prepare Data
+#Histogramme
+```{r}
+SinistreData=read.csv("SinistreData.csv")
+str(data)
+table(SinistreData$montant)
+table(SinistreData$nombres)
+SinistreData$nombres[1]
+SinistreData$montant[1]
+plot(table(SinistreData$nombres))
+plot(table(SinistreData$montant))
+```
+
+
+#Modelisation
+```{r}
+install.packages("fitdistrplus")
+library(fitdistrplus)
+```
+
+
+
+                    # I. SinistreData$nombres
+# (1)  fit of a poisson distribution
+```{r}
+fitp <- fitdist(SinistreData$nombres,"pois")
+summary(fitp)
+
+```
+```{r}
+plot(fitp)
+```
+```{r}
+cdfcomp(fitp, addlegend=FALSE)
+
+```
+```{r}
+ppcomp(fitp, addlegend=FALSE)
+
+```
+```{r}
+qqcomp(fitp, addlegend=FALSE)
+
+```
+
+
+
+# (2) fit of a negative binomial distribution
+```{r}
+fitnb <- fitdist(SinistreData$nombres,"nbinom")
+summary(fitnb)
+
+```
+
+```{r}
+plot(fitnb)
+
+```
+
+```{r}
+cdfcomp(fitnb, addlegend=FALSE)
+
+```
+
+```{r}
+ppcomp(fitnb, addlegend=FALSE)
+
+```
+
+```{r}
+qqcomp(fitnb, addlegend=FALSE)
+
+```
+
+
+# (3) fit of a  binomial distribution
+```{r}
+fitBi=fitdist(SinistreData$nombres, dist="binom", fix.arg=list(size=11), start=list(prob=0.3))
+summary(fitBi)
+```
+
+```{r}
+plot(fitBi)
+
+```
+
+```{r}
+cdfcomp(fitBi, addlegend=FALSE)
+
+```
+
+```{r}
+ppcomp(fitBi, addlegend=FALSE)
+
+```
+
+```{r}
+qqcomp(fitBi, addlegend=FALSE)
+
+```
+
+
+# (4) Comparison of various fits #cumulative distribution function
+```{r}
+
+cdfcomp(list(fitp,fitnb,fitBi), legendtext=c("poisson", "negative binomial", " binomial"))
+```
+```{r}
+gofstat(list(fitp,fitnb,fitBi))
+
+```
+
+
+                    # II. SinistreData$nombres
+# (1) fit of a gamma distribution by maximum likelihood estimation
+```{r}
+fitg <- fitdist(SinistreData$montant, "gamma")
+summary(fitg)
+```
+```{r}
+cdfcomp(fitg, addlegend=FALSE)
+
+```
+
+```{r}
+denscomp(fitg, addlegend=FALSE)
+
+```
+
+```{r}
+ppcomp(fitg, addlegend=FALSE)
+
+```
+
+```{r}
+qqcomp(fitg, addlegend=FALSE)
+
+```
+
+
+
+# (2) fit of a lognormal distribution by maximum likelihood estimation
+```{r}
+fitln <- fitdist(SinistreData$montant, "lnorm")
+summary(fitln)
+```
+```{r}
+plot(fitln, histo = FALSE, demp = TRUE)
+
+```
+
+```{r}
+cdfcomp(fitln, addlegend=FALSE)
+
+```
+
+```{r}
+denscomp(fitln, addlegend=FALSE)
+
+```
+
+```{r}
+ppcomp(fitln, addlegend=FALSE)
+
+```
+
+```{r}
+qqcomp(fitln, addlegend=FALSE)
+
+```
+
+
+# (3) fit of a weibull distribution by maximum likelihood estimation
+```{r}
+fitW <- fitdist(SinistreData$montant, "weibull")
+summary(fitW)
+```
+```{r}
+plot(fitW, histo = FALSE, demp = TRUE)
+
+```
+
+```{r}
+cdfcomp(fitW, addlegend=FALSE)
+
+```
+
+```{r}
+denscomp(fitW, addlegend=FALSE)
+
+```
+
+```{r}
+ppcomp(fitW, addlegend=FALSE)
+
+```
+
+```{r}
+qqcomp(fitW, addlegend=FALSE)
+
+```
+
+
+
+# (4) fit of a normal distribution by maximum likelihood estimation
+```{r}
+fitn <- fitdist(SinistreData$montant, "norm")
+summary(fitn)
+```
+```{r}
+plot(fitn, histo = FALSE, demp = TRUE)
+
+```
+
+```{r}
+cdfcomp(fitn, addlegend=FALSE)
+
+```
+
+```{r}
+denscomp(fitn, addlegend=FALSE)
+
+```
+
+```{r}
+ppcomp(fitn, addlegend=FALSE)
+
+```
+
+```{r}
+qqcomp(fitn, addlegend=FALSE)
+
+```
+
+
+
+# (5) Comparison of various fits
+```{r}
+cdfcomp(list(fitW, fitg, fitln, fitn), legendtext=c("Weibull", "gamma", "lognormal", "normal"))
+
+```
+```{r}
+denscomp(list(fitW, fitg, fitln,fitn), legendtext=c("Weibull", "gamma", "lognormal", "normal"))
+```
+
+```{r}
+qqcomp(list(fitW, fitg, fitln, fitn), legendtext=c("Weibull", "gamma", "lognormal", "normal"))
+```
+
+```{r}
+ppcomp(list(fitW, fitg, fitln, fitn), legendtext=c("Weibull", "gamma", "lognormal", "normal"))
+```
+
+```{r}
+gofstat(list(fitW, fitg, fitln, fitn), fitnames=c("Weibull", "gamma", "lognormal", "normal"))
+```
+
+
+
+
+
+
+
+
