@@ -1,5 +1,5 @@
 ---
-title: Mod�f©lisation des montants des sinistres et des fr�f©quences des sinistres--
+title: Modélisation des montants des sinistres et des fréquences des sinistres--
   Notebook
 output:
   html_notebook: default
